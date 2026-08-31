@@ -116,9 +116,24 @@ Estudiante: Isaac
 
 ## 🚀 5. Compilación y Ejecución
 
-* **Compilar:** Doble clic en `compilar.bat`
-* **Ejecutar Menú:** Doble clic en `ejecutar.bat`
-* **Ejecutar Pruebas:** Doble clic en `probar.bat`
+El proyecto puede abrirse y ejecutarse directamente desde cualquier entorno de desarrollo (IDE) o por terminal:
+
+* **En IDE (VS Code, IntelliJ IDEA, NetBeans, Eclipse):**
+  1. Abrir la carpeta del proyecto.
+  2. Ir a `src/ec/edu/puce/Main.java`.
+  3. Hacer clic en **Run / Ejecutar**.
+
+* **Por Consola / Terminal:**
+  ```bash
+  # Compilar
+  javac -d bin src/ec/edu/puce/model/*.java src/ec/edu/puce/graph/*.java src/ec/edu/puce/dijkstra/*.java src/ec/edu/puce/view/*.java src/ec/edu/puce/test/*.java src/ec/edu/puce/Main.java
+
+  # Ejecutar Menú Principal
+  java -cp bin ec.edu.puce.Main
+
+  # Ejecutar Pruebas Unitarias
+  java -cp bin ec.edu.puce.test.LogiPackTest
+  ```
 
 ---
 
