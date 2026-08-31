@@ -66,12 +66,12 @@ public class RutaResultado {
     }
 
     /**
-     * Genera la gráfica visual en ASCII:
-     * "[0] QUITO ──(150 km)──> [3] AMBATO ──(220 km)──> [4] CUENCA"
+     * Genera la grafica visual en formato limpio compatible con cualquier consola:
+     * "[0] QUITO --(150 km)--> [3] AMBATO --(220 km)--> [4] CUENCA"
      */
     public String getGraficaRutaAscii() {
         if (!existeRuta || camino.isEmpty()) {
-            return " [!] No existe conexión vial disponible.";
+            return " [!] No existe conexion vial disponible.";
         }
         if (camino.size() == 1) {
             return " [" + camino.get(0).getId() + "] " + camino.get(0).getNombre().toUpperCase() + " (Misma sede)";
@@ -82,7 +82,7 @@ public class RutaResultado {
             Sede actual = camino.get(i);
             grafica.append("[").append(actual.getId()).append("] ").append(actual.getNombre().toUpperCase());
             if (i < distanciasTramos.size()) {
-                grafica.append(" ──(").append(distanciasTramos.get(i)).append(" km)──> ");
+                grafica.append(" --(").append(distanciasTramos.get(i)).append(" km)--> ");
             }
         }
         return grafica.toString();

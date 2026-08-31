@@ -7,7 +7,7 @@ import ec.edu.puce.model.Sede;
 
 /**
  * Clase encargada de imprimir en la consola (CLI) el formato visual
- * exactamente como se solicita en la guía del proyecto final.
+ * del sistema de optimizacion de rutas.
  */
 public class ConsolaVista {
     private static final String SEPARADOR = "===============================================================================";
@@ -19,13 +19,13 @@ public class ConsolaVista {
 
     public void mostrarEncabezado() {
         System.out.println(SEPARADOR);
-        System.out.println("LOGIPACK ECUADOR - SISTEMA DE OPTIMIZACIÓN");
+        System.out.println("LOGIPACK ECUADOR - SISTEMA DE OPTIMIZACION");
         System.out.println("Estudiante: " + nombreEstudiante);
         System.out.println(SEPARADOR);
     }
 
     public void mostrarCatalogoSedes(GrafoLogistico grafo) {
-        System.out.println("\n[Centros Logísticos Disponibles]:");
+        System.out.println("\n[Centros Logisticos Disponibles]:");
         for (Sede s : grafo.getSedes()) {
             if (s != null) {
                 System.out.printf("  [%d] %s%n", s.getId(), s.getNombre());
@@ -40,7 +40,7 @@ public class ConsolaVista {
             if (s != null) {
                 for (Conexion c : grafo.getConexiones(s.getId())) {
                     if (s.getId() < c.getDestino().getId()) {
-                        System.out.printf("  • %s (%d) <──(%d km)──> %s (%d)%n",
+                        System.out.printf("  * %s (%d) <---(%d km)---> %s (%d)%n",
                                 s.getNombre(), s.getId(), c.getDistanciaKm(),
                                 c.getDestino().getNombre(), c.getDestino().getId());
                     }
@@ -51,7 +51,7 @@ public class ConsolaVista {
     }
 
     /**
-     * Muestra la salida visual requerida en la Sección 3 del documento del proyecto.
+     * Muestra la salida visual requerida en la Seccion 3 del documento del proyecto.
      */
     public void mostrarResultadoRuta(RutaResultado ruta) {
         if (ruta == null) {
@@ -64,24 +64,24 @@ public class ConsolaVista {
 
         System.out.println();
         System.out.println(SEPARADOR);
-        System.out.println("LOGIPACK ECUADOR - SISTEMA DE OPTIMIZACIÓN");
+        System.out.println("LOGIPACK ECUADOR - SISTEMA DE OPTIMIZACION");
         System.out.println("Estudiante: " + nombreEstudiante);
         System.out.println(SEPARADOR);
         System.out.println();
 
-        System.out.printf("[Ruta seleccionada]: %s (%d) ──> %s (%d)%n",
+        System.out.printf("[Ruta seleccionada]: %s (%d) ---> %s (%d)%n",
                 origen.getNombre().toUpperCase(), origen.getId(),
                 destino.getNombre().toUpperCase(), destino.getId());
 
-        System.out.println("[Grafica de la ruta óptima]:");
+        System.out.println("[Grafica de la ruta optima]:");
         System.out.println(ruta.getGraficaRutaAscii());
         System.out.println();
 
         System.out.println("[Detalle del Despacho]:");
-        System.out.printf(" • Origen:          %s [Sede %d]%n", origen.getNombre(), origen.getId());
-        System.out.printf(" • Destino:         %s [Sede %d]%n", destino.getNombre(), destino.getId());
-        System.out.printf(" • Secuencia Óptima: %s%n", ruta.getSecuenciaTexto());
-        System.out.printf(" • Distancia Total:  %d km%n", ruta.getDistanciaTotal());
+        System.out.printf(" * Origen:          %s [Sede %d]%n", origen.getNombre(), origen.getId());
+        System.out.printf(" * Destino:         %s [Sede %d]%n", destino.getNombre(), destino.getId());
+        System.out.printf(" * Secuencia Optima: %s%n", ruta.getSecuenciaTexto());
+        System.out.printf(" * Distancia Total:  %d km%n", ruta.getDistanciaTotal());
         System.out.println(SEPARADOR);
         System.out.println();
     }

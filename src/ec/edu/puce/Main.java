@@ -6,13 +6,11 @@ import ec.edu.puce.model.RutaResultado;
 import ec.edu.puce.model.Sede;
 import ec.edu.puce.view.ConsolaVista;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
  * Proyecto Final de Estructuras de Datos - PUCE TEC
- * Motor de Enrutamiento Logístico (LogiPack Ecuador)
+ * Motor de Enrutamiento Logistico (LogiPack Ecuador)
  *
  * Estudiante: Isaac
  */
@@ -20,30 +18,23 @@ public class Main {
     private static final String ESTUDIANTE = "Isaac";
 
     public static void main(String[] args) {
-        // Configuramos la consola para soportar caracteres UTF-8 (flechas, tildes)
-        try {
-            System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8.name()));
-        } catch (Exception e) {
-            // Si el sistema no lo permite, continúa normalmente
-        }
-
         GrafoLogistico redLogistica = GrafoLogistico.crearRedLogiPackEcuador();
         DijkstraSolver dijkstraSolver = new DijkstraSolver();
         ConsolaVista vista = new ConsolaVista(ESTUDIANTE);
-        Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+        Scanner scanner = new Scanner(System.in);
 
         vista.mostrarEncabezado();
 
         boolean salir = false;
         while (!salir) {
-            System.out.println("============== MENÚ DE OPERACIONES ==============");
-            System.out.println("  1. Calcular Ruta Óptima entre dos Sedes (Dijkstra)");
+            System.out.println("============== MENU DE OPERACIONES ==============");
+            System.out.println("  1. Calcular Ruta Optima entre dos Sedes (Dijkstra)");
             System.out.println("  2. Ejecutar Ejemplo Oficial del Documento (Quito -> Cuenca)");
             System.out.println("  3. Ver Mapa de Sedes y Conexiones Viales");
             System.out.println("  4. Ejecutar Matriz Completa de Rutas");
             System.out.println("  5. Salir");
             System.out.println("==================================================");
-            System.out.print("Seleccione una opción (1-5): ");
+            System.out.print("Seleccione una opcion (1-5): ");
 
             if (!scanner.hasNextLine()) {
                 break;
@@ -68,10 +59,10 @@ public class Main {
                     break;
                 case "5":
                     salir = true;
-                    System.out.println("\n[i] Gracias por utilizar el Sistema de Optimización LogiPack Ecuador.\n");
+                    System.out.println("\n[i] Gracias por utilizar el Sistema de Optimizacion LogiPack Ecuador.\n");
                     break;
                 default:
-                    System.out.println("\n[!] Opción no válida. Por favor ingrese un número del 1 al 5.\n");
+                    System.out.println("\n[!] Opcion no valida. Por favor ingrese un numero del 1 al 5.\n");
             }
         }
         scanner.close();
@@ -102,20 +93,20 @@ public class Main {
                 }
                 System.out.printf("[!] ID fuera de rango. Debe ser entre 0 y %d.%n", total - 1);
             } catch (NumberFormatException e) {
-                System.out.println("[!] Entrada inválida. Debe escribir un número entero.");
+                System.out.println("[!] Entrada invalida. Debe escribir un numero entero.");
             }
         }
     }
 
     private static void mostrarTodasLasRutas(GrafoLogistico grafo, DijkstraSolver solver) {
-        System.out.println("\n============== MATRIZ DE RUTAS ÓPTIMAS ENTRE TODAS LAS SEDES ==============");
+        System.out.println("\n============== MATRIZ DE RUTAS OPTIMAS ENTRE TODAS LAS SEDES ==============");
         for (Sede origen : grafo.getSedes()) {
             if (origen == null) continue;
             for (Sede destino : grafo.getSedes()) {
                 if (destino == null) continue;
                 if (origen.getId() != destino.getId()) {
                     RutaResultado res = solver.calcularRutaOptima(grafo, origen.getId(), destino.getId());
-                    System.out.printf("  • De %-10s a %-10s -> Distancia: %3d km | Ruta: %s%n",
+                    System.out.printf("  * De %-10s a %-10s -> Distancia: %3d km | Ruta: %s%n",
                             origen.getNombre(), destino.getNombre(), res.getDistanciaTotal(), res.getSecuenciaTexto());
                 }
             }

@@ -35,8 +35,8 @@ public class LogiPackTest {
         // 5. Cuenca (4) -> Manta (1) = 385 km (Cuenca -> Guayaquil -> Manta: 195 + 190 = 385)
         verificar(solver.calcularRutaOptima(grafo, 4, 1), 385, "Cuenca -> Guayaquil -> Manta", "Cuenca a Manta");
 
-        // 6. Simetría: Cuenca (4) -> Quito (0) = 370 km
-        verificar(solver.calcularRutaOptima(grafo, 4, 0), 370, "Cuenca -> Ambato -> Quito", "Simetría: Cuenca a Quito");
+        // 6. Simetria: Cuenca (4) -> Quito (0) = 370 km
+        verificar(solver.calcularRutaOptima(grafo, 4, 0), 370, "Cuenca -> Ambato -> Quito", "Simetria: Cuenca a Quito");
 
         // 7. Misma sede: Quito (0) -> Quito (0) = 0 km
         verificar(solver.calcularRutaOptima(grafo, 0, 0), 0, "Quito", "Misma Sede: Quito a Quito");
