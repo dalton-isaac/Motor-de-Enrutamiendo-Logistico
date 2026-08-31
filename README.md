@@ -46,72 +46,53 @@ La empresa de mensajería y distribución **LogiPack Ecuador** necesita optimiza
 
 ---
 
-## 🏗️ 2. Arquitectura del Sistema y Estructuras de Datos
+## 🏗️ 2. Estructura del Proyecto y Paquetes
 
-El software está implementado siguiendo los principios de la Programación Orientada a Objetos (POO) y una separación de responsabilidades en capas limpias:
+Siguiendo el estándar institucional de la PUCE, los paquetes están organizados bajo `ec.edu.puce`:
 
 ```
 src/
-└── com/logipack/
-    ├── model/
-    │   ├── Sede.java           # Nodo/Vértice del grafo (ID, Nombre)
-    │   ├── Conexion.java       # Arista ponderada (Destino, Distancia km)
-    │   └── RutaResultado.java  # DTO con camino, tramos y distancia total
-    ├── graph/
-    │   └── GrafoLogistico.java # Lista y Matriz de Adyacencia del Grafo
-    ├── dijkstra/
-    │   └── DijkstraSolver.java # Algoritmo de Dijkstra con Min-Heap y reconstrucción
-    ├── view/
-    │   └── ConsolaVista.java   # Renderizado ASCII de consola según especificación
-    ├── test/
-    │   └── LogiPackTest.java   # Suite de pruebas unitarias automatizadas
-    └── Main.java               # Menú interactivo y punto de entrada
+└── ec/
+    └── edu/
+        └── puce/
+            ├── model/
+            │   ├── Sede.java           # Clase para representar cada centro logístico (ID, Nombre)
+            │   ├── Conexion.java       # Representa una vía con destino y distancia en km
+            │   └── RutaResultado.java  # Guarda la ruta final calculada, tramos y distancia total
+            ├── graph/
+            │   └── GrafoLogistico.java # Grafo con Lista de Adyacencia y Matriz de Distancias
+            ├── dijkstra/
+            │   └── DijkstraSolver.java # Algoritmo de Dijkstra con vectores y cola de prioridad
+            ├── view/
+            │   └── ConsolaVista.java   # Salida visual en consola con formato ASCII del proyecto
+            ├── test/
+            │   └── LogiPackTest.java   # Suite de pruebas unitarias automáticas
+            └── Main.java               # Menú interactivo y ejecución del programa
 ```
 
-### 🧠 Justificación de Estructuras de Datos Elegidas
+---
 
-1. **Lista de Adyacencia (`Map<Integer, List<Conexion>>`)**:
-   * **Por qué:** Permite iterar únicamente sobre las aristas incidentes reales de cada vértice al momento de explorar vecinos en Dijkstra, evitando revisar celdas vacías como en una matriz densa.
-   * **Complejidad Espacial:** $O(V + E)$.
+## 🧠 3. Estructuras de Datos Utilizadas (Para Sustentación)
 
-2. **Cola de Prioridad / Min-Heap (`PriorityQueue<NodoDistancia>`)**:
-   * **Por qué:** Dijkstra requiere extraer repetidamente el nodo no visitado con la menor distancia acumulada mínima. El Min-Heap garantiza extracción en $O(\log V)$ en lugar de $O(V)$ de una búsqueda lineal.
-   * **Complejidad Temporal Total:** $O((V + E) \cdot \log V)$.
+1. **Arreglo de Sedes (`Sede[] sedes`)**:
+   * Almacena las 5 sedes indexadas directamente por su ID (`0` a `4`), permitiendo acceso en tiempo constante $O(1)$.
 
-3. **Vector de Distancias (`int[] distancias`)**:
-   * Almacena la cota superior conocida de la distancia mínima desde el origen a cada nodo. Inicializado en $\infty$ (`Integer.MAX_VALUE`).
+2. **Lista de Adyacencia (`List<Conexion>[] listaAdyacencia`)**:
+   * Es un arreglo de listas (`ArrayList`). En la posición `i` guarda las ciudades a las que se puede viajar directamente desde la sede `i`.
+   * **Ventaja:** Solo ocupa la memoria necesaria para las conexiones existentes ($O(V + E)$).
 
-4. **Vector de Predecesores (`int[] predecesores`)**:
-   * Guarda el identificador del nodo padre que generó la distancia mínima óptima. Permite reconstruir la secuencia exacta del camino en tiempo $O(V)$ mediante seguimiento inverso de punteros.
+3. **Matriz de Adyacencia (`int[][] matrizAdyacencia`)**:
+   * Matriz de $5 \times 5$ para consultar la distancia directa entre cualquier par de ciudades en $O(1)$.
 
-5. **Vector de Nodos Visitados (`boolean[] visitados`)**:
-   * Previene procesar nodos más de una vez una vez que su distancia mínima ha sido formalmente fijada (propiedad de Greedy del algoritmo de Dijkstra).
+4. **Algoritmo de Dijkstra**:
+   * **`distancias[]` (Vector de enteros):** Guarda la distancia acumulada mínima encontrada desde el origen hasta cada ciudad. Se inicializa con `Integer.MAX_VALUE` (infinito).
+   * **`visitados[]` (Vector booleano):** Marca con `true` las ciudades cuya distancia más corta ya está calculada y confirmada.
+   * **`predecesores[]` (Vector de enteros):** Guarda de qué ciudad venimos para llegar a la actual. Es la clave para reconstruir el camino al revés desde el destino hacia el origen.
+   * **`PriorityQueue<ElementoCola>` (Cola de Prioridad / Min-Heap):** Permite obtener siempre y de forma rápida ($O(\log V)$) la siguiente ciudad con menor distancia acumulada.
 
 ---
 
-## ⚡ 3. Funcionamiento del Algoritmo de Dijkstra
-
-Para calcular la ruta óptima entre un **Origen $S$** y un **Destino $D$**:
-
-1. **Inicialización:**
-   * $dist[S] = 0$, $dist[v] = \infty \quad \forall v \neq S$.
-   * $pred[v] = -1 \quad \forall v$.
-   * Insertar $(S, 0)$ en la `PriorityQueue`.
-2. **Bucle Principal:**
-   * Extraer el nodo $u$ con menor distancia acumulada.
-   * Si $u$ ya está marcado como visitado, ignorar.
-   * Marcar $u$ como visitado. Si $u == D$, finalizar tempranamente (optimización).
-   * Para cada arista $(u \to v, w)$:
-     * **Relajación:** Si $dist[u] + w < dist[v]$, actualizar $dist[v] = dist[u] + w$, fijar $pred[v] = u$ e insertar $(v, dist[v])$ en la cola de prioridad.
-3. **Reconstrucción del Camino:**
-   * Desde $D$, seguir $pred[D] \to pred[pred[D]] \to \dots \to S$.
-   * Invertir la lista para presentar el orden cronológico del viaje.
-
----
-
-## 🖥️ 4. Salida en Consola (Fiel a la Especificación)
-
-Ejemplo de ejecución con la ruta **Quito (0) ──> Cuenca (4)**:
+## 🖥️ 4. Salida en Consola (Fiel a la Especificación del PDF)
 
 ```text
 ===============================================================================
@@ -135,54 +116,42 @@ Estudiante: Isaac
 
 ## 🚀 5. Compilación y Ejecución
 
-### Opción Rápida (Scripts Batch en Windows)
 * **Compilar:** Doble clic en `compilar.bat`
 * **Ejecutar Menú:** Doble clic en `ejecutar.bat`
 * **Ejecutar Pruebas:** Doble clic en `probar.bat`
 
-### Opción Manual por Terminal
-```bash
-# 1. Compilación
-javac -encoding UTF-8 -d bin src/com/logipack/model/*.java src/com/logipack/graph/*.java src/com/logipack/dijkstra/*.java src/com/logipack/view/*.java src/com/logipack/test/*.java src/com/logipack/Main.java
+---
 
-# 2. Ejecución de la Aplicación
-java -Dfile.encoding=UTF-8 -cp bin com.logipack.Main
+## 🧪 6. Resultados de las Pruebas Unitarias
 
-# 3. Ejecución de la Suite de Pruebas Unitarias
-java -Dfile.encoding=UTF-8 -cp bin com.logipack.test.LogiPackTest
-```
+| Origen | Destino | Distancia Mínima | Secuencia Óptima | Resultado |
+|---|---|---|---|:---:|
+| **Quito (0)** | **Cuenca (4)** | **370 km** | `Quito -> Ambato -> Cuenca` | ✅ PASS |
+| **Quito (0)** | **Manta (1)** | **460 km** | `Quito -> Ambato -> Manta` | ✅ PASS |
+| **Quito (0)** | **Guayaquil (2)** | **420 km** | `Quito -> Guayaquil` | ✅ PASS |
+| **Ambato (3)** | **Guayaquil (2)** | **415 km** | `Ambato -> Cuenca -> Guayaquil` | ✅ PASS |
+| **Cuenca (4)** | **Manta (1)** | **385 km** | `Cuenca -> Guayaquil -> Manta` | ✅ PASS |
+| **Cuenca (4)** | **Quito (0)** | **370 km** | `Cuenca -> Ambato -> Quito` | ✅ PASS |
+| **Quito (0)** | **Quito (0)** | **0 km** | `Quito` | ✅ PASS |
 
 ---
 
-## 🧪 6. Matriz de Pruebas y Validación de Escenarios
+## 🎓 7. Guía de Sustentación para Isaac (25 Puntos)
 
-| ID | Origen | Destino | Distancia Mínima | Secuencia Óptima | Estado |
-|---|---|---|---|---|:---:|
-| **T01** | Quito (0) | Cuenca (4) | **370 km** | `Quito -> Ambato -> Cuenca` | ✅ PASS |
-| **T02** | Quito (0) | Manta (1) | **460 km** | `Quito -> Ambato -> Manta` | ✅ PASS |
-| **T03** | Quito (0) | Guayaquil (2) | **420 km** | `Quito -> Guayaquil` | ✅ PASS |
-| **T04** | Ambato (3) | Guayaquil (2) | **415 km** | `Ambato -> Cuenca -> Guayaquil` | ✅ PASS |
-| **T05** | Cuenca (4) | Manta (1) | **385 km** | `Cuenca -> Guayaquil -> Manta` | ✅ PASS |
-| **T06** | Cuenca (4) | Quito (0) | **370 km** | `Cuenca -> Ambato -> Quito` | ✅ PASS |
-| **T07** | Quito (0) | Quito (0) | **0 km** | `Quito` | ✅ PASS |
+### Preguntas Típicas del Profesor y Cómo Responder:
 
----
+1. **¿Qué es un Grafo y cómo lo representaste en Java?**
+   * *"Un grafo es un conjunto de vértices (las sedes) y aristas (las vías). En este proyecto lo representé con una **Lista de Adyacencia** usando un arreglo de `ArrayList<Conexion>`, donde cada posición contiene las ciudades vecinas y la distancia en km."*
 
-## 🎓 7. Guía Rápida para la Sustentación Individual (25 Puntos)
+2. **¿Cómo funciona el Algoritmo de Dijkstra paso a paso?**
+   * *"1. Coloco la distancia de la ciudad origen en 0 y las demás en infinito.*
+   * *2. Meto el origen en una cola de prioridad.*
+   * *3. Saco la ciudad con menor distancia, reviso sus vecinas y calculo la suma acumulada.*
+   * *4. Si esa suma es menor a la distancia que teníamos guardada (proceso de relajación), actualizo la distancia y anoto en el arreglo de `predecesores` de dónde vine.*
+   * *5. Repito hasta llegar al destino."*
 
-### ❓ Preguntas Frecuentes del Docente y Respuestas Técnicas
+3. **¿Cómo reconstruyes la ruta al final?**
+   * *"Uso el arreglo `predecesores[]`. Empiezo desde la ciudad destino y voy retrocediendo de padre en padre hasta llegar al origen. Luego simplemente invierto la lista para mostrar el orden cronológico del viaje."*
 
-1. **¿Qué tipo de grafo modelaste y por qué?**
-   * *Respuesta:* Un **grafo ponderado no dirigido**, porque las vías terrestres permiten el tránsito en ambos sentidos y cada arista tiene un costo asociado (la distancia en kilómetros).
-
-2. **¿Por qué utilizaste una Lista de Adyacencia en lugar de solo una Matriz?**
-   * *Respuesta:* La lista de adyacencia es óptima en espacio $O(V + E)$ para grafos dispersos. Al ejecutar Dijkstra, permite recorrer directamente los vecinos reales de un nodo sin tener que inspeccionar toda la fila de la matriz, reduciendo el tiempo de exploración.
-
-3. **¿Cómo funciona el vector de predecesores en la reconstrucción?**
-   * *Respuesta:* Cada vez que se relaja una arista $(u, v)$ reduciendo la distancia hacia $v$, se guarda `predecesores[v] = u`. Al finalizar Dijkstra, partimos del destino y hacemos un backtracking hasta el origen; luego invertimos la lista para obtener el camino de ida.
-
-4. **¿Cuál es la complejidad temporal de tu implementación de Dijkstra?**
-   * *Respuesta:* Es $O((V + E) \log V)$ gracias a la cola de prioridad `PriorityQueue` (Min-Heap). En el peor de los casos, cada vértice se inserta y extrae de la cola en $O(\log V)$, y cada arista se relaja una vez.
-
-5. **¿Qué pasa si hay pesos negativos?**
-   * *Respuesta:* Dijkstra asume pesos no negativos ($\ge 0$). En este problema real de logística, las distancias viales siempre son positivas. Si existieran pesos negativos, se debería utilizar Bellman-Ford.
+4. **¿Por qué la ruta Quito -> Cuenca da 370 km y no va directo por Guayaquil?**
+   * *"Porque por Guayaquil la distancia sería: Quito a Guayaquil (420 km) + Guayaquil a Cuenca (195 km) = 615 km. En cambio por Ambato es: Quito a Ambato (150 km) + Ambato a Cuenca (220 km) = 370 km. Dijkstra evaluó ambas opciones y eligió la de 370 km porque es la menor."*

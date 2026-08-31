@@ -1,32 +1,27 @@
-package com.logipack.model;
+package ec.edu.puce.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * Encapsula el resultado de la ejecución del algoritmo de Dijkstra:
- * Contiene el origen, destino, secuencia óptima de sedes, distancias de cada tramo y distancia total.
+ * Clase que almacena el resultado final del enrutamiento de Dijkstra.
+ * Guarda la sede de origen, destino, lista ordenada del camino, distancias por tramo y total.
  */
 public class RutaResultado {
-    private final Sede origen;
-    private final Sede destino;
-    private final List<Sede> camino;
-    private final List<Integer> distanciasTramos;
-    private final int distanciaTotal;
-    private final boolean existeRuta;
+    private Sede origen;
+    private Sede destino;
+    private List<Sede> camino;
+    private List<Integer> distanciasTramos;
+    private int distanciaTotal;
+    private boolean existeRuta;
 
     public RutaResultado(Sede origen, Sede destino, List<Sede> camino, List<Integer> distanciasTramos, int distanciaTotal, boolean existeRuta) {
         this.origen = origen;
         this.destino = destino;
-        this.camino = camino != null ? Collections.unmodifiableList(camino) : Collections.emptyList();
-        this.distanciasTramos = distanciasTramos != null ? Collections.unmodifiableList(distanciasTramos) : Collections.emptyList();
+        this.camino = camino != null ? camino : new ArrayList<>();
+        this.distanciasTramos = distanciasTramos != null ? distanciasTramos : new ArrayList<>();
         this.distanciaTotal = distanciaTotal;
         this.existeRuta = existeRuta;
-    }
-
-    public static RutaResultado sinRuta(Sede origen, Sede destino) {
-        return new RutaResultado(origen, destino, new ArrayList<>(), new ArrayList<>(), Integer.MAX_VALUE, false);
     }
 
     public Sede getOrigen() {
@@ -54,24 +49,24 @@ public class RutaResultado {
     }
 
     /**
-     * Retorna la secuencia óptima en formato texto: "Quito -> Ambato -> Cuenca"
+     * Genera la secuencia en formato texto: "Quito -> Ambato -> Cuenca"
      */
     public String getSecuenciaTexto() {
         if (!existeRuta || camino.isEmpty()) {
             return "No existe ruta";
         }
-        StringBuilder sb = new StringBuilder();
+        StringBuilder texto = new StringBuilder();
         for (int i = 0; i < camino.size(); i++) {
-            sb.append(camino.get(i).getNombre());
+            texto.append(camino.get(i).getNombre());
             if (i < camino.size() - 1) {
-                sb.append(" -> ");
+                texto.append(" -> ");
             }
         }
-        return sb.toString();
+        return texto.toString();
     }
 
     /**
-     * Retorna la gráfica visual de la ruta en formato ASCII:
+     * Genera la gráfica visual en ASCII:
      * "[0] QUITO ──(150 km)──> [3] AMBATO ──(220 km)──> [4] CUENCA"
      */
     public String getGraficaRutaAscii() {
@@ -81,15 +76,15 @@ public class RutaResultado {
         if (camino.size() == 1) {
             return " [" + camino.get(0).getId() + "] " + camino.get(0).getNombre().toUpperCase() + " (Misma sede)";
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(" ");
+        StringBuilder grafica = new StringBuilder();
+        grafica.append(" ");
         for (int i = 0; i < camino.size(); i++) {
             Sede actual = camino.get(i);
-            sb.append("[").append(actual.getId()).append("] ").append(actual.getNombre().toUpperCase());
+            grafica.append("[").append(actual.getId()).append("] ").append(actual.getNombre().toUpperCase());
             if (i < distanciasTramos.size()) {
-                sb.append(" ──(").append(distanciasTramos.get(i)).append(" km)──> ");
+                grafica.append(" ──(").append(distanciasTramos.get(i)).append(" km)──> ");
             }
         }
-        return sb.toString();
+        return grafica.toString();
     }
 }

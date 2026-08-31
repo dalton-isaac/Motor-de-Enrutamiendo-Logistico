@@ -1,26 +1,30 @@
-package com.logipack;
+package ec.edu.puce;
 
-import com.logipack.dijkstra.DijkstraSolver;
-import com.logipack.graph.GrafoLogistico;
-import com.logipack.model.RutaResultado;
-import com.logipack.model.Sede;
-import com.logipack.view.ConsolaVista;
+import ec.edu.puce.dijkstra.DijkstraSolver;
+import ec.edu.puce.graph.GrafoLogistico;
+import ec.edu.puce.model.RutaResultado;
+import ec.edu.puce.model.Sede;
+import ec.edu.puce.view.ConsolaVista;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
- * Punto de entrada principal para el Sistema de Optimización de LogiPack Ecuador.
+ * Proyecto Final de Estructuras de Datos - PUCE TEC
+ * Motor de Enrutamiento Logístico (LogiPack Ecuador)
+ *
+ * Estudiante: Isaac
  */
 public class Main {
     private static final String ESTUDIANTE = "Isaac";
 
     public static void main(String[] args) {
-        // Asegurar salida UTF-8 en consola para renderizado fiel de caracteres ASCII / Unicode
+        // Configuramos la consola para soportar caracteres UTF-8 (flechas, tildes)
         try {
             System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8.name()));
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            // Si el sistema no lo permite, continúa normalmente
         }
 
         GrafoLogistico redLogistica = GrafoLogistico.crearRedLogiPackEcuador();
@@ -44,14 +48,14 @@ public class Main {
             if (!scanner.hasNextLine()) {
                 break;
             }
-            String entrada = scanner.nextLine().trim();
+            String opcion = scanner.nextLine().trim();
 
-            switch (entrada) {
+            switch (opcion) {
                 case "1":
-                    procesarConsultaPersonalizada(redLogistica, dijkstraSolver, vista, scanner);
+                    calcularRutaPersonalizada(redLogistica, dijkstraSolver, vista, scanner);
                     break;
                 case "2":
-                    // Quito (0) a Cuenca (4)
+                    // Ejemplo del PDF: Quito (0) a Cuenca (4)
                     RutaResultado ejemplo = dijkstraSolver.calcularRutaOptima(redLogistica, 0, 4);
                     vista.mostrarResultadoRuta(ejemplo);
                     break;
@@ -60,53 +64,55 @@ public class Main {
                     vista.mostrarTopologiaRed(redLogistica);
                     break;
                 case "4":
-                    ejecutarMatrizCompleta(redLogistica, dijkstraSolver, vista);
+                    mostrarTodasLasRutas(redLogistica, dijkstraSolver);
                     break;
                 case "5":
                     salir = true;
                     System.out.println("\n[i] Gracias por utilizar el Sistema de Optimización LogiPack Ecuador.\n");
                     break;
                 default:
-                    System.out.println("\n[!] Opción no válida. Por favor, ingrese un número del 1 al 5.\n");
+                    System.out.println("\n[!] Opción no válida. Por favor ingrese un número del 1 al 5.\n");
             }
         }
         scanner.close();
     }
 
-    private static void procesarConsultaPersonalizada(GrafoLogistico grafo, DijkstraSolver solver, ConsolaVista vista, Scanner scanner) {
+    private static void calcularRutaPersonalizada(GrafoLogistico grafo, DijkstraSolver solver, ConsolaVista vista, Scanner scanner) {
         vista.mostrarCatalogoSedes(grafo);
 
-        int idOrigen = solicitarIdSede(scanner, "Ingrese el ID de la Sede ORIGEN (0-4): ", grafo.getTotalSedes());
+        int idOrigen = pedirSedeValida(scanner, "Ingrese el ID de la Sede ORIGEN (0-4): ", grafo.getTotalSedes());
         if (idOrigen == -1) return;
 
-        int idDestino = solicitarIdSede(scanner, "Ingrese el ID de la Sede DESTINO (0-4): ", grafo.getTotalSedes());
+        int idDestino = pedirSedeValida(scanner, "Ingrese el ID de la Sede DESTINO (0-4): ", grafo.getTotalSedes());
         if (idDestino == -1) return;
 
-        RutaResultado ruta = solver.calcularRutaOptima(grafo, idOrigen, idDestino);
-        vista.mostrarResultadoRuta(ruta);
+        RutaResultado resultado = solver.calcularRutaOptima(grafo, idOrigen, idDestino);
+        vista.mostrarResultadoRuta(resultado);
     }
 
-    private static int solicitarIdSede(Scanner scanner, String mensaje, int max) {
+    private static int pedirSedeValida(Scanner scanner, String mensaje, int total) {
         while (true) {
             System.out.print(mensaje);
             if (!scanner.hasNextLine()) return -1;
-            String input = scanner.nextLine().trim();
+            String entrada = scanner.nextLine().trim();
             try {
-                int id = Integer.parseInt(input);
-                if (id >= 0 && id < max) {
+                int id = Integer.parseInt(entrada);
+                if (id >= 0 && id < total) {
                     return id;
                 }
-                System.out.printf("[!] ID fuera de rango. Debe ser entre 0 y %d.%n", max - 1);
+                System.out.printf("[!] ID fuera de rango. Debe ser entre 0 y %d.%n", total - 1);
             } catch (NumberFormatException e) {
-                System.out.println("[!] Entrada inválida. Ingrese un número entero.");
+                System.out.println("[!] Entrada inválida. Debe escribir un número entero.");
             }
         }
     }
 
-    private static void ejecutarMatrizCompleta(GrafoLogistico grafo, DijkstraSolver solver, ConsolaVista vista) {
+    private static void mostrarTodasLasRutas(GrafoLogistico grafo, DijkstraSolver solver) {
         System.out.println("\n============== MATRIZ DE RUTAS ÓPTIMAS ENTRE TODAS LAS SEDES ==============");
         for (Sede origen : grafo.getSedes()) {
+            if (origen == null) continue;
             for (Sede destino : grafo.getSedes()) {
+                if (destino == null) continue;
                 if (origen.getId() != destino.getId()) {
                     RutaResultado res = solver.calcularRutaOptima(grafo, origen.getId(), destino.getId());
                     System.out.printf("  • De %-10s a %-10s -> Distancia: %3d km | Ruta: %s%n",

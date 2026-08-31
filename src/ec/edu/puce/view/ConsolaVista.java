@@ -1,17 +1,17 @@
-package com.logipack.view;
+package ec.edu.puce.view;
 
-import com.logipack.graph.GrafoLogistico;
-import com.logipack.model.Conexion;
-import com.logipack.model.RutaResultado;
-import com.logipack.model.Sede;
+import ec.edu.puce.graph.GrafoLogistico;
+import ec.edu.puce.model.Conexion;
+import ec.edu.puce.model.RutaResultado;
+import ec.edu.puce.model.Sede;
 
 /**
- * Encargada de renderizar la interfaz de usuario en consola (CLI)
- * con el formato ASCII exacto especificado en los requerimientos.
+ * Clase encargada de imprimir en la consola (CLI) el formato visual
+ * exactamente como se solicita en la guía del proyecto final.
  */
 public class ConsolaVista {
     private static final String SEPARADOR = "===============================================================================";
-    private final String nombreEstudiante;
+    private String nombreEstudiante;
 
     public ConsolaVista(String nombreEstudiante) {
         this.nombreEstudiante = nombreEstudiante;
@@ -27,20 +27,23 @@ public class ConsolaVista {
     public void mostrarCatalogoSedes(GrafoLogistico grafo) {
         System.out.println("\n[Centros Logísticos Disponibles]:");
         for (Sede s : grafo.getSedes()) {
-            System.out.printf("  [%d] %s%n", s.getId(), s.getNombre());
+            if (s != null) {
+                System.out.printf("  [%d] %s%n", s.getId(), s.getNombre());
+            }
         }
         System.out.println();
     }
 
     public void mostrarTopologiaRed(GrafoLogistico grafo) {
-        System.out.println("\n[Conexiones Viales de la Red]:");
+        System.out.println("\n[Conexiones Viales y Distancias]:");
         for (Sede s : grafo.getSedes()) {
-            for (Conexion c : grafo.getConexiones(s.getId())) {
-                // Mostrar solo en un sentido para no duplicar en la lista visual
-                if (s.getId() < c.getDestino().getId()) {
-                    System.out.printf("  • %s (%d) <──(%d km)──> %s (%d)%n",
-                            s.getNombre(), s.getId(), c.getDistanciaKm(),
-                            c.getDestino().getNombre(), c.getDestino().getId());
+            if (s != null) {
+                for (Conexion c : grafo.getConexiones(s.getId())) {
+                    if (s.getId() < c.getDestino().getId()) {
+                        System.out.printf("  • %s (%d) <──(%d km)──> %s (%d)%n",
+                                s.getNombre(), s.getId(), c.getDistanciaKm(),
+                                c.getDestino().getNombre(), c.getDestino().getId());
+                    }
                 }
             }
         }
@@ -48,9 +51,14 @@ public class ConsolaVista {
     }
 
     /**
-     * Muestra la salida visual oficial de la ruta calculada según la página 2 del PDF.
+     * Muestra la salida visual requerida en la Sección 3 del documento del proyecto.
      */
     public void mostrarResultadoRuta(RutaResultado ruta) {
+        if (ruta == null) {
+            System.out.println("[!] No fue posible calcular la ruta.");
+            return;
+        }
+
         Sede origen = ruta.getOrigen();
         Sede destino = ruta.getDestino();
 
