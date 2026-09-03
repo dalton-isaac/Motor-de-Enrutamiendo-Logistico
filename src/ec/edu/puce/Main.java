@@ -29,12 +29,11 @@ public class Main {
         while (!salir) {
             System.out.println("============== MENU DE OPERACIONES ==============");
             System.out.println("  1. Calcular Ruta Optima entre dos Sedes (Dijkstra)");
-            System.out.println("  2. Ejecutar Ejemplo Oficial del Documento (Quito -> Cuenca)");
-            System.out.println("  3. Ver Mapa de Sedes y Conexiones Viales");
-            System.out.println("  4. Ejecutar Matriz Completa de Rutas");
-            System.out.println("  5. Salir");
+            System.out.println("  2. Ver Mapa de Sedes y Conexiones Viales");
+            System.out.println("  3. Ejecutar Matriz Completa de Rutas");
+            System.out.println("  4. Salir");
             System.out.println("==================================================");
-            System.out.print("Seleccione una opcion (1-5): ");
+            System.out.print("Seleccione una opcion (1-4): ");
 
             if (!scanner.hasNextLine()) {
                 break;
@@ -46,23 +45,18 @@ public class Main {
                     calcularRutaPersonalizada(redLogistica, dijkstraSolver, vista, scanner);
                     break;
                 case "2":
-                    // Ejemplo del PDF: Quito (0) a Cuenca (4)
-                    RutaResultado ejemplo = dijkstraSolver.calcularRutaOptima(redLogistica, 0, 4);
-                    vista.mostrarResultadoRuta(ejemplo);
-                    break;
-                case "3":
                     vista.mostrarCatalogoSedes(redLogistica);
                     vista.mostrarTopologiaRed(redLogistica);
                     break;
-                case "4":
+                case "3":
                     mostrarTodasLasRutas(redLogistica, dijkstraSolver);
                     break;
-                case "5":
+                case "4":
                     salir = true;
                     System.out.println("\n[i] Gracias por utilizar el Sistema de Optimizacion LogiPack Ecuador.\n");
                     break;
                 default:
-                    System.out.println("\n[!] Opcion no valida. Por favor ingrese un numero del 1 al 5.\n");
+                    System.out.println("\n[!] Opcion no valida. Por favor ingrese un numero del 1 al 4.\n");
             }
         }
         scanner.close();
