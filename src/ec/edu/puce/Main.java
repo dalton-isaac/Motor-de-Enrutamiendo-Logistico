@@ -68,6 +68,15 @@ public class Main {
         scanner.close();
     }
 
+    /**
+     * Solicita interactivamente los IDs de origen y destino por consola,
+     * ejecuta el algoritmo de Dijkstra y presenta los resultados formateados.
+     * 
+     * @param grafo   Instancia del grafo logístico con sedes y conexiones.
+     * @param solver  Instancia del solucionador con el algoritmo de Dijkstra.
+     * @param vista   Instancia de la vista para renderizar la salida.
+     * @param scanner Scanner para captura de datos del usuario.
+     */
     private static void calcularRutaPersonalizada(GrafoLogistico grafo, DijkstraSolver solver, ConsolaVista vista, Scanner scanner) {
         vista.mostrarCatalogoSedes(grafo);
 
@@ -81,6 +90,15 @@ public class Main {
         vista.mostrarResultadoRuta(resultado);
     }
 
+    /**
+     * Valida de forma robusta la entrada numérica del usuario para asegurar
+     * que corresponda a un índice de sede existente en el catálogo.
+     * 
+     * @param scanner Scanner para lectura de entrada estándar.
+     * @param mensaje Texto explicativo del prompt para el usuario.
+     * @param total   Número total de sedes registradas en el grafo.
+     * @return ID válido de la sede seleccionada, o -1 si finaliza el flujo de entrada.
+     */
     private static int pedirSedeValida(Scanner scanner, String mensaje, int total) {
         while (true) {
             System.out.print(mensaje);
@@ -98,6 +116,14 @@ public class Main {
         }
     }
 
+    /**
+     * Itera sobre todas las combinaciones posibles de pares de sedes (origen-destino)
+     * y muestra la distancia mínima y secuencia óptima para cada una, validando
+     * la consistencia global del grafo y del algoritmo de Dijkstra.
+     * 
+     * @param grafo  Instancia del grafo con la red logística completa.
+     * @param solver Solucionador de Dijkstra para resolver cada par.
+     */
     private static void mostrarTodasLasRutas(GrafoLogistico grafo, DijkstraSolver solver) {
         System.out.println("\n============== MATRIZ DE RUTAS OPTIMAS ENTRE TODAS LAS SEDES ==============");
         for (Sede origen : grafo.getSedes()) {

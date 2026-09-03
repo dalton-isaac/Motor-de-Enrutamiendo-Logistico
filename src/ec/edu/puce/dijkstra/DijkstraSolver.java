@@ -5,19 +5,17 @@ import ec.edu.puce.model.Conexion;
 import ec.edu.puce.model.RutaResultado;
 import ec.edu.puce.model.Sede;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Implementación del Algoritmo de Dijkstra para encontrar el camino más corto.
  * Utiliza:
  * - distancias[]: Vector para almacenar las distancias acumuladas mínimas.
  * - visitados[]: Vector booleano para marcar nodos procesados.
- * - predecesores[]: Vector para recordar desde qué nodo llegamos (permite reconstruir la ruta).
- * - PriorityQueue: Cola de prioridad (Min-Heap) para seleccionar el nodo más cercano.
+ * - predecesores[]: Vector para recordar desde qué nodo llegamos (permite
+ * reconstruir la ruta).
+ * - PriorityQueue: Cola de prioridad (Min-Heap) para seleccionar el nodo más
+ * cercano.
  */
 public class DijkstraSolver {
 

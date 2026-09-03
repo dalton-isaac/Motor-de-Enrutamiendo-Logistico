@@ -3,11 +3,11 @@ package ec.edu.puce.graph;
 import ec.edu.puce.model.Conexion;
 import ec.edu.puce.model.Sede;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
- * Representa la red vial de LogiPack Ecuador como un Grafo Ponderado No Dirigido.
+ * Representa la red vial de LogiPack Ecuador como un Grafo Ponderado No
+ * Dirigido.
  * Utiliza estructuras fundamentales de la asignatura:
  * 1. Arreglo de Sedes (Vértices)
  * 2. Arreglo de Listas para la Lista de Adyacencia (ArrayList<Conexion>[])
@@ -96,7 +96,8 @@ public class GrafoLogistico {
     }
 
     /**
-     * Construye la red de LogiPack Ecuador con las 5 sedes y 6 conexiones viales del proyecto.
+     * Construye la red de LogiPack Ecuador con las 5 sedes y 6 conexiones viales
+     * del proyecto.
      */
     public static GrafoLogistico crearRedLogiPackEcuador() {
         GrafoLogistico grafo = new GrafoLogistico(5);

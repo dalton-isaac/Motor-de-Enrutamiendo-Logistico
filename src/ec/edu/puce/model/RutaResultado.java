@@ -1,11 +1,11 @@
 package ec.edu.puce.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Clase que almacena el resultado final del enrutamiento de Dijkstra.
- * Guarda la sede de origen, destino, lista ordenada del camino, distancias por tramo y total.
+ * Guarda la sede de origen, destino, lista ordenada del camino, distancias por
+ * tramo y total.
  */
 public class RutaResultado {
     private Sede origen;
@@ -15,7 +15,8 @@ public class RutaResultado {
     private int distanciaTotal;
     private boolean existeRuta;
 
-    public RutaResultado(Sede origen, Sede destino, List<Sede> camino, List<Integer> distanciasTramos, int distanciaTotal, boolean existeRuta) {
+    public RutaResultado(Sede origen, Sede destino, List<Sede> camino, List<Integer> distanciasTramos,
+            int distanciaTotal, boolean existeRuta) {
         this.origen = origen;
         this.destino = destino;
         this.camino = camino != null ? camino : new ArrayList<>();
