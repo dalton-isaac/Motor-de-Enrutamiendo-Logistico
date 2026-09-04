@@ -72,7 +72,7 @@ src/
 
 ---
 
-## 🧠 3. Estructuras de Datos Utilizadas (Para Sustentación)
+## 🧠 3. Estructuras de Datos Utilizadas
 
 1. **Arreglo de Sedes (`Sede[] sedes`)**:
    * Almacena las 5 sedes indexadas directamente por su ID (`0` a `4`), permitiendo acceso en tiempo constante $O(1)$.
@@ -149,24 +149,3 @@ El proyecto puede abrirse y ejecutarse directamente desde cualquier entorno de d
 | **Cuenca (4)** | **Quito (0)** | **370 km** | `Cuenca -> Ambato -> Quito` | ✅ PASS |
 | **Quito (0)** | **Quito (0)** | **0 km** | `Quito` | ✅ PASS |
 
----
-
-## 🎓 7. Guía de Sustentación para Isaac (25 Puntos)
-
-### Preguntas Típicas del Profesor y Cómo Responder:
-
-1. **¿Qué es un Grafo y cómo lo representaste en Java?**
-   * *"Un grafo es un conjunto de vértices (las sedes) y aristas (las vías). En este proyecto lo representé con una **Lista de Adyacencia** usando un arreglo de `ArrayList<Conexion>`, donde cada posición contiene las ciudades vecinas y la distancia en km."*
-
-2. **¿Cómo funciona el Algoritmo de Dijkstra paso a paso?**
-   * *"1. Coloco la distancia de la ciudad origen en 0 y las demás en infinito.*
-   * *2. Meto el origen en una cola de prioridad.*
-   * *3. Saco la ciudad con menor distancia, reviso sus vecinas y calculo la suma acumulada.*
-   * *4. Si esa suma es menor a la distancia que teníamos guardada (proceso de relajación), actualizo la distancia y anoto en el arreglo de `predecesores` de dónde vine.*
-   * *5. Repito hasta llegar al destino."*
-
-3. **¿Cómo reconstruyes la ruta al final?**
-   * *"Uso el arreglo `predecesores[]`. Empiezo desde la ciudad destino y voy retrocediendo de padre en padre hasta llegar al origen. Luego simplemente invierto la lista para mostrar el orden cronológico del viaje."*
-
-4. **¿Por qué la ruta Quito -> Cuenca da 370 km y no va directo por Guayaquil?**
-   * *"Porque por Guayaquil la distancia sería: Quito a Guayaquil (420 km) + Guayaquil a Cuenca (195 km) = 615 km. En cambio por Ambato es: Quito a Ambato (150 km) + Ambato a Cuenca (220 km) = 370 km. Dijkstra evaluó ambas opciones y eligió la de 370 km porque es la menor."*
